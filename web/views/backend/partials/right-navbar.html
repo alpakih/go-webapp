@@ -1,0 +1,42 @@
+<ul class="navbar-nav ml-auto">
+    <!-- Messages Dropdown Menu -->
+    <li class="nav-item dropdown">
+        {{with getUserAuth .ctx}}
+            <a class="nav-link" data-toggle="dropdown" href="#">
+                <div class="media">
+                    <img
+                            {{if (ne .Image "")}}
+                                src="{{.Image}}"
+                            {{else}}
+                                src="https://via.placeholder.com/150.png?text=Empty+Image"
+                            {{end}} alt="User Avatar" class="img-size-32 img-circle mr-3">
+                    <div class="media-body">
+                        <h3 class="dropdown-item-title">
+                            {{.Name}}
+                            <span class="float-right text-sm text-warning">&nbsp;&nbsp;<i
+                                        class="fas fa-check"></i></span>
+                        </h3>
+                    </div>
+                </div>
+            </a>
+        {{end}}
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <div class="dropdown-divider"></div>
+            <span class="dropdown-item dropdown-header">Account Setting</span>
+            <a href="#" class="dropdown-item">
+                <!-- Message Start -->
+                <i class="fas fa-user mr-2"></i>Account
+                <span class="float-right">Profile</span>
+                <!-- Message End -->
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item dropdown-footer">
+                <form method="POST" action="/admin/auth/logout">
+                    <input type="hidden" name="csrf" value="{{ getCsrfToken .ctx}}">
+                    <input type="submit" class="btn btn-label btn-label-brand btn-sm btn-bold" value="Sign Out">
+                </form>
+            </a>
+        </div>
+    </li>
+
+</ul>

@@ -1,0 +1,137 @@
+{{define "styles"}}
+<!-- DataTables -->
+<link rel="stylesheet" href="/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="/assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+{{end}}
+{{define "content"}}
+{{if .flashMessage}}
+{{if (eq .flashMessage.Type "success")}}
+<div class="alert alert-success alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h5><i class="icon fas fa-check"></i> Success!</h5>
+    {{.flashMessage.Message}}
+</div>
+{{end}}
+{{if (eq .flashMessage.Type "error")}}
+<div class="alert alert-danger alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h5><i class="icon fas fa-ban"></i> Error!</h5>
+    {{.flashMessage.Message}}
+</div>
+{{end}}
+{{end}}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-table"></i>&nbsp;&nbsp;User Table
+                </h2>
+                <a href="/admin/users/add" class="btn btn-info float-right">
+                    <i class="fa fa-plus"></i>
+                    New Record
+                </a>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            {{include "user/table"}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.col -->
+</div>
+{{end}}
+
+
+{{define "scripts"}}
+<!-- DataTables -->
+<script src="/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script type="text/javascript">
+
+    $(function () {
+        $('#userTable').DataTable({
+            processing: true,
+            serverSide: true,
+            lengthChange: true,
+            fixedColumns: true,
+            autoWidth: false,
+            "language": {
+                processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
+            },
+            fixedHeader: {
+                "header": false,
+                "footer": false
+            },
+            ajax: '/admin/users/datatable',
+            columns: [
+                {
+                    data: 'id',
+                    name: 'users.id',
+                    width: '5%',
+                    visible: false,
+                    className: 'center'
+                },
+                {data: 'username', name: 'username'},
+                {data: 'email', name: 'email'},
+                {data: 'role_name', name: 'roles.role_name'},
+                {data: 'created_at', name: 'users.created_at'},
+                {data: 'action', orderable: false, searchable: false, className: 'text-center'},
+            ],
+        });
+    });
+
+    //Delete function datatable
+    function Delete(id) {
+        data = new FormData();
+        data.append('csrf', $('meta[name="csrf-token"]').attr('content'));
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    url: '/admin/users/delete/' + id,
+                    type: 'DELETE',
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                        Swal.fire(
+                            'Deleted!',
+                            'User has been deleted.',
+                            'success'
+                        );
+                        $('#userTable').DataTable().ajax.reload();
+                    },
+                    error: function (res) {
+                        console.log(res)
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Oops...',
+                            text: res.responseJSON.message,
+                        });
+                    }
+                })
+            }
+        });
+    }
+
+</script>
+
+{{end}}

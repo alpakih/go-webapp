@@ -1,0 +1,149 @@
+{{define "styles"}}
+    <link rel="stylesheet" href="/assets/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+{{end}}
+{{define "content"}}
+    <form id="user" method="POST" action="/admin/users/store" enctype="multipart/form-data">
+        <div class="card card-default">
+            <div class="card-header">
+                <h3 class="card-title">Add User</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                {{if .flashMessage}}
+                    {{if (eq .flashMessage.Type "error")}}
+                        <div class="alert alert-danger alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h5><i class="icon fas fa-ban"></i> Error!</h5>
+                            {{.flashMessage.Message}}
+                        </div>
+                    {{end}}
+                {{end}}
+                <input type="hidden" id="token" name="csrf" value="{{ getCsrfToken .ctx }}">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" class="form-control">
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" class="form-control">
+                        </div>
+                        <!-- /.form-group -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="roles">Role</label>
+                            <select class="form-control select2bs4"
+                                    id="roles"
+                                    name="role_id">
+                            </select>
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" class="form-control">
+                        </div>
+                        <!-- /.form-group -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+
+                <div class="row">
+                    <!-- /.col -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="image">Image</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="image" name="image">
+                                <label class="custom-file-label" for="image">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="image">Preview</label>
+                            <img id="image_preview" style="height: 200px;width: 300px"
+                                 src="https://via.placeholder.com/150.png?text=Empty+Image"
+                                 alt="avatar"/>
+                        </div>
+                    </div>
+                    <!-- /.form-group -->
+                </div>
+
+                <!-- /.col -->
+                <!-- /.row -->
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+                <a href="/admin/users/list" class="btn btn-secondary float-right" style="margin-left: 20px">
+                    <i class="fa fa-backward"></i>
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-primary float-right" value="Submit">Submit</button>
+            </div>
+        </div>
+    </form>
+
+{{end}}
+{{define "scripts"}}
+    <script src="/assets/plugins/select2/js/select2.full.min.js"></script>
+    <script src="/assets/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            bsCustomFileInput.init()
+            $('#roles').select2({
+                theme:'bootstrap4',
+                placeholder: "Select Role",
+                allowClear: true,
+                multiple: false,
+                ajax: {
+                    url: '/admin/roles/select2',
+                    datatype: 'json',
+                    type: "GET",
+                    data: function (params) {
+                        return {
+                            term: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        console.log(data)
+                        return {
+                            results: $.map(data, function (item) {
+                                return {
+                                    text: item.text,
+                                    id: item.id
+                                }
+                            })
+                        };
+                    }
+                }
+            });
+            $("#image").change(function () {
+                readURL(this);
+            });
+        })
+
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#image_preview').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+    </script>
+{{end}}

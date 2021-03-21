@@ -1,0 +1,99 @@
+{{define "styles"}}
+    <link rel="stylesheet" href="/assets/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+{{end}}
+{{define "content"}}
+    <div class="card card-default">
+        <div class="card-header">
+            <h3 class="card-title">View Permission</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="slug">Slug</label>
+                        <input type="text" id="slug" name="slug" value="{{.data.Slug}}" class="form-control" readonly>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                        <label for="role_name">Role Name</label>
+                        <input type="text" id="role_name" name="role_name" value="{{.data.RoleName}}" class="form-control" readonly>
+                    </div>
+                    <!-- /.form-group -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="permissions">Permission</label>
+                        <select class="form-control select2bs4"
+                                id="permissions"
+                                name="permissions[]" disabled>
+                        </select>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" class="form-control" readonly>{{.data.Description}}</textarea>
+                    </div>
+                    <!-- /.form-group -->
+                </div>
+                <!-- /.col -->
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+            <a href="/admin/roles/list" class="btn btn-secondary">
+                <i class="fa fa-backward"></i>
+                Back
+            </a>
+        </div>
+    </div>
+
+{{end}}
+{{define "scripts"}}
+    <script src="/assets/plugins/select2/js/select2.full.min.js"></script>
+    <script type="text/javascript">
+        var initialPropertyOptions = [];
+        {{range .data.Permission}}
+        var initialPropertyOption = {
+            id: {{.ID}},
+            text: {{.Feature}},
+            selected: true
+        };
+        initialPropertyOptions.push(initialPropertyOption);
+        {{end}}
+
+        $('#permissions').select2({
+            placeholder: "Select Permissions",
+            allowClear: true,
+            multiple: true,
+            ajax: {
+                url: '/admin/permissions/select2',
+                datatype: 'json',
+                type: "GET",
+                data: function (params) {
+                    return {
+                        term: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                text: item.text,
+                                id: item.id
+                            }
+                        })
+                    };
+                }
+            },
+            data: initialPropertyOptions
+        });
+
+    </script>
+{{end}}
