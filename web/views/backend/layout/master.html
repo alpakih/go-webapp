@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{.title}}</title>
+    {{if (eq .title "Authentication | Login")}}
+        <meta name="csrf-token" content="">
+    {{else}}
+        <meta name="csrf-token" content="{{ getCsrfToken .ctx}}">
+    {{end}}
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{include "layout/head"}}
+    {{block "styles" .}}
+    {{end}}
+</head>
+<body class="hold-transition {{if (eq .title "Authentication | Login")}} login-page {{else}} sidebar-mini layout-fixed{{end}}">
+{{if (eq .title "Authentication | Login")}}
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="#"><b>Login</b> Page</a>
+        </div>
+        <div class="card">
+            <div class="card-body login-card-body">
+                <p class="login-box-msg">Sign in to start your session</p>
+                {{template "content" .}}
+            </div>
+        </div>
+    </div>
+{{else}}
+    <div class="wrapper">
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links -->
+            {{template "partials/left-navbar" .}}
+
+
+            <!-- SEARCH FORM -->
+
+
+            <!-- Right navbar links -->
+            {{template "partials/right-navbar" .}}
+
+        </nav>
+        <!-- /.navbar -->
+
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <!-- Brand Logo -->
+            {{template "partials/brand-logo" .}}
+
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Sidebar user panel (optional) -->
+
+
+                <!-- Sidebar Menu -->
+                {{template "partials/sidebar-menu" .}}
+
+                <!-- /.sidebar-menu -->
+            </div>
+            <!-- /.sidebar -->
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            {{template "partials/page-header" .}}
+
+            <!-- /.content-header -->
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    {{template "content" .}}
+                </div><!-- /.container-fluid -->
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        {{include "layout/footer"}}
+
+        <!-- Control Sidebar -->
+
+        <!-- /.control-sidebar -->
+    </div>
+{{end}}
+
+<!-- ./wrapper -->
+{{include "layout/script"}}
+{{block "scripts" .}}
+{{end}}
+</body>
+</html>

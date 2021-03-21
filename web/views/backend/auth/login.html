@@ -1,0 +1,44 @@
+{{define "content"}}
+
+    {{if .flashMessage}}
+        {{if (eq .flashMessage.Type "success")}}
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h5><i class="icon fas fa-check"></i> Success!</h5>
+                {{.flashMessage.Message}}
+            </div>
+        {{end}}
+        {{if (eq .flashMessage.Type "error")}}
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h5><i class="icon fas fa-ban"></i> Error!</h5>
+                {{.flashMessage.Message}}
+            </div>
+        {{end}}
+    {{end}}
+    <form action="/admin/auth/login" method="POST">
+        <div class="input-group mb-3">
+            <input type="email" name="email" class="form-control" placeholder="Email">
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-envelope"></span>
+                </div>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            <input type="password" name="password" class="form-control" placeholder="Password">
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-lock"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row float-right">
+            <!-- /.col -->
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            </div>
+            <!-- /.col -->
+        </div>
+    </form>
+{{end}}
